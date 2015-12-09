@@ -17,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
 
     final static String ALERTFRAGTAG = "SetAlertFrag";
 
+    final static String STARTFRAGTAG = "StartFrag";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
-        if (getFragmentManager().findFragmentByTag(ALERTFRAGTAG) == null ) {
+        if (getFragmentManager().findFragmentByTag(STARTFRAGTAG) == null ) {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            SetAlertFragment fragment = new SetAlertFragment();
-            transaction.add(R.id.fragmentcontainer, fragment, ALERTFRAGTAG);
+            StartFragment fragment = new StartFragment();
+            transaction.add(R.id.fragmentcontainer, fragment, STARTFRAGTAG);
             transaction.commit();
         }
     }

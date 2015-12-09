@@ -1,5 +1,8 @@
 package com.example.aqi.iotapp;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -10,13 +13,17 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SeekBar;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,15 +39,25 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
-    private int[] RGBFrame = {0, 0, 0};
+    private String mActivityTitle;
+
+    private ActionBarDrawerToggle mDrawerToggle;
+
+    private ArrayAdapter<String> mDrawerAdapter;
+
+    private ListView mDrawerList;
+
+    private DrawerLayout mDrawerLayout;
+
+    private final String[] drawerArray = {"Profile", "Interval Settings", "Alert Settings"};:
+
+    private FragmentManager fragmentManager;
 
     private TextView isSerial;
 
     private TextView mConnectionState;
 
     private TextView mDataField;
-
-    private SeekBar mRed, mGreen, mBlue;
 
     private String mDeviceName;
 
@@ -173,39 +190,6 @@ public class DeviceControlActivity extends AppCompatActivity {
         return intentFilter;
     }
 
-    private void readSeek(SeekBar seekBar, final int pos) {
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                RGBFrame[pos] = progress;
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                makeChange();
-            }
-        });
-    }
-
-    // On change of seekbar write char
-    private void makeChange() {
-        String str = RGBFrame[0] + "," + RGBFrame[1] + "," + RGBFrame[2] + "\n";
-        Log.d(TAG, "Sending result=" + str);
-        final byte[] tx = str.getBytes();
-        if (mConnected) {
-            characteristicTX.setValue(tx);
-            mBluetoothLeService.writeCharacteristic(characteristicTX);
-            mBluetoothLeService.setCharacteristicNotification(characteristicRX, true);
-        }
-    }
-
     // Write characteristic to turn on Arduino LED
     public void onLed(View view){
         String str = "1";
@@ -219,6 +203,27 @@ public class DeviceControlActivity extends AppCompatActivity {
         }
     }
 
+    // Send signal to arduino to start alerts
+    public void btnTurnOnAlerts(View view)
+    {
+        String str = "Turn on alerts~";
+        final byte[] tx=  str.getBytes();
+        if(mConnected)
+        {
+            characteristicTX.setValue(tx);
+            mBluetoothLeService.writeCharacteristic(characteristicTX);
+            mBluetoothLeService.setCharacteristicNotification(characteristicRX,true);
+        }
+    }
+
+    public void btnSettings(View view)
+    {
+        mDrawerLayout.openDrawer(mDrawerLayout);
+
+    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,6 +232,17 @@ public class DeviceControlActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        fragmentManager = getFragmentManager();
+
+
+        //Set up navigation drawer
+        mDrawerList = (ListView)findViewById(R.id.left_drawer);
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mActivityTitle = getTitle().toString();
+
+        addDrawerItems();
+        setupDrawer();
 
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
@@ -239,14 +255,6 @@ public class DeviceControlActivity extends AppCompatActivity {
         isSerial = (TextView) findViewById(R.id.isSerial);
 
         mDataField = (TextView) findViewById(R.id.data_value);
-        mRed = (SeekBar) findViewById(R.id.seekRed);
-        mGreen = (SeekBar) findViewById(R.id.seekGreen);
-        mBlue = (SeekBar) findViewById(R.id.seekBlue);
-
-        readSeek(mRed, 0);
-        readSeek(mGreen, 1);
-        readSeek(mBlue, 2);
-
 
         toolbar.setTitle(R.string.title_devices);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
@@ -304,6 +312,91 @@ public class DeviceControlActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addDrawerItems(){
+
+        mDrawerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, drawerArray);
+        mDrawerList.setAdapter(mDrawerAdapter);
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment;
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                switch (position) {
+                    case 0:
+                        //pops till the named fragment, non-inclusive
+                        //this will be the first AttractionLocatorFragment
+                        //started when the app is first launched
+                        fragmentManager.popBackStackImmediate(FRAG_ATTRLOC, 0);
+
+                        findViewById(R.id.myMapFragment).setVisibility(View.VISIBLE);
+
+                        transaction.replace(R.id.relative, fragmentManager.findFragmentByTag(FRAG_ATTRLOC));
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        break;
+                    case 1:
+
+                       //Pop up to but not including the attraction locator
+                        fragmentManager.popBackStackImmediate(FRAG_ATTRLOC,0);
+
+                        //Hide mapfragment
+                        findViewById(R.id.myMapFragment).setVisibility(View.GONE);
+
+                        fragment = new ItineraryPlannerFragment();
+                        transaction.replace(R.id.relative, fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        break;
+                    case 2:
+                        //Pop up to but not including the attraction locator
+                        fragmentManager.popBackStackImmediate(FRAG_ATTRLOC,0);
+
+                        //Hide mapfragment
+                        findViewById(R.id.myMapFragment).setVisibility(View.GONE);
+
+                        if(fragmentManager.findFragmentByTag(FRAG_BUDGET)==null)
+                        {
+                            fragment = new BudgetManagerFragment();
+                            transaction.replace(R.id.relative, fragment,FRAG_BUDGET);
+                        }
+                        else
+                        {
+                           transaction.replace(R.id.relative, frag_attrloc);
+                        }
+
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        break;
+                                   }
+                setTitle(drawerArray[position]);
+                mDrawerLayout.closeDrawer(mDrawerList);
+            }
+        });
+    }
+
+    private void setupDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle("Navigation");
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(mActivityTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
 

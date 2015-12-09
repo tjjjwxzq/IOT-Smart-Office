@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,12 +36,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class DeviceScanActivity extends AppCompatActivity{
+
+    private static final String TAG = DeviceScanActivity.class.getSimpleName();
+
+    private TextView textNoDevice;
+
+    private ProgressBar mProgressBar;
 
     private ListView mDeviceListView;
 
@@ -66,6 +74,8 @@ public class DeviceScanActivity extends AppCompatActivity{
         mHandler = new Handler();
 
         mDeviceListView = (ListView) findViewById(R.id.listview_devices);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progress);
 
         // Initializes a Bluetooth adapter. For API level 18 and above,
         // get a reference to BluetoothAdapter through BluetoothManager
@@ -168,11 +178,13 @@ public class DeviceScanActivity extends AppCompatActivity{
 
     private void scanLeDevice(final boolean enable){
         if(enable){
-            //Stops scanning after a pre-definied scan perido
+            mProgressBar.setVisibility(View.VISIBLE);
+            //Stops scanning after a pre-defined scan period
             mHandler.postDelayed(new Runnable(){
 
                 @Override
                 public void run(){
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     mScanning = false;
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     invalidateOptionsMenu();
@@ -183,6 +195,7 @@ public class DeviceScanActivity extends AppCompatActivity{
             mBluetoothAdapter.startLeScan(mLeScanCallback);
         } else{
             mScanning = false;
+            mProgressBar.setVisibility(View.INVISIBLE);
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
         invalidateOptionsMenu();
@@ -270,6 +283,18 @@ public class DeviceScanActivity extends AppCompatActivity{
                     runOnUiThread(new Runnable(){
                         @Override
                         public void run(){
+                            //Find the bluetooth module on arduino
+                            //If found stop scan and go to set alert activity
+                            String name = device.getName();
+                            if(name!= null && name.equals("itworks"))
+                            {
+                                Log.d(TAG, "ITworks found!");
+                                final Intent intent = new Intent(getBaseContext(), DeviceControlActivity.class);
+                                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
+                                intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+                                scanLeDevice(false);
+                                startActivity(intent);
+                            }
                             mLeDeviceListAdapter.addDevice(device);
                             mLeDeviceListAdapter.notifyDataSetChanged();
                         }
@@ -277,6 +302,12 @@ public class DeviceScanActivity extends AppCompatActivity{
                 }
 
             };
+
+    // Try to scan for devices again
+    public void btnTryAgain(View v)
+    {
+        scanLeDevice(true);
+    }
 
 
 }
