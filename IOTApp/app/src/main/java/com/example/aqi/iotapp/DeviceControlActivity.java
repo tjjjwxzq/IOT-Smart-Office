@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -124,6 +125,8 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     private void displayData(String data) {
         if (data != null) {
+            Log.i(TAG, "Data:" + data);
+
             mDataField.setText(data);
         }
     }
@@ -156,6 +159,8 @@ public class DeviceControlActivity extends AppCompatActivity {
             // get characterstic when UUID matches RX/TX UUID
             characteristicTX = gattService.getCharacteristic(BluetoothLeService.UUID_HM_RX_TX);
             characteristicRX = gattService.getCharacteristic(BluetoothLeService.UUID_HM_RX_TX);
+
+
         }
     }
 
@@ -203,8 +208,15 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     // Write characteristic to turn on Arduino LED
     public void onLed(View view){
-
-
+        String str = "1";
+        Log.d(TAG, "Sending LED signal = " + str);
+        final byte[] tx = str.getBytes();
+        if(mConnected)
+        {
+            characteristicTX.setValue(tx);
+            mBluetoothLeService.writeCharacteristic(characteristicTX);
+            mBluetoothLeService.setCharacteristicNotification(characteristicRX, true);
+        }
     }
 
 
@@ -212,6 +224,9 @@ public class DeviceControlActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_control);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
@@ -232,8 +247,8 @@ public class DeviceControlActivity extends AppCompatActivity {
         readSeek(mGreen, 1);
         readSeek(mBlue, 2);
 
-        getActionBar().setTitle(mDeviceName);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setTitle(R.string.title_devices);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent,mServiceConnection, BIND_AUTO_CREATE);
     }

@@ -14,58 +14,74 @@ SoftwareSerial mySerial(3, 4); // RX, TX
 
 SoftwareSerial mySerial(10, 11); // RX, TX
 
-  int red,green,blue;
-  Adafruit_NeoPixel strip = Adafruit_NeoPixel(10, 6, NEO_GRB + NEO_KHZ800);
+unsigned long time1; // last time alert was set 
+unsigned long time2; // next time led is on
+unsigned long duration; //duration between led signal 
 
 void setup() {
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
-
+ 
   // initialize serial:
    Serial.begin(9600);
    mySerial.begin(9600);
+   pinMode(13,OUTPUT);
+   
+   time1=0;
+   time2=0;
    
    Serial.println("Test starting");
 }
 
 void loop() {
+  
   // if there's any serial available, read it:
   while (mySerial.available() > 0) {
 
     // look for the next valid integer in the incoming serial stream:
-    int red = Serial.parseInt(); 
+   // int red = mySerial.parseInt(); 
     // do it again:
-    int green = Serial.parseInt(); x
+   // int green = mySerial.parseInt(); 
     // do it again:
-    int blue = Serial.parseInt(); 
+   // int blue = mySerial.parseInt(); 
 
     // look for the newline. That's the end of your
     // sentence:
-    if(Serial.available())
-      Serial.write(mySerial.read());
+     
+    //Light LED if received 1
+    if (mySerial.read() == '1')
+    {
+      time2 = millis(); //get time since board started
+      duration = time2 - time1;
+ 
+      Serial.println("LED ON");
+      Serial.println(time2);
+      Serial.println(time1);
+      Serial.println(duration);
+      
+      time1 = time2;  
+      
+      mySerial.print("LED ON"); 
+      digitalWrite(13, HIGH);
+      delay(1000);
+      digitalWrite(13, LOW);
+      delay(1000);
+    }
     // if (mySerial.read() == '\n') {
-    if (Serial.read() == '\n') {
+   // if (mySerial.read() == '\n') {
       // sends confirmation
-      Serial.println("received");
-      // constrain the values to 0 - 255
+   // Serial.println("received:" + String(red)+"," + String(green) + "," + String(blue));
+    //Serial.write(red);
+       
+     /* // constrain the values to 0 - 255
       red = constrain(red, 0, 255);
       green = constrain(green, 0, 255);
       blue = constrain(blue, 0, 255);
       // fill strip
-      colorSet(strip.Color(red, green, blue), 0); 
+      //colorSet(strip.Color(red, green, blue), 0); 
       
       // send some data back
       mySerial.println("received:"+String(red)+","+String(green)+","+String(blue));
      
-   }
+   }*/
 }
 }
 
-// Fill strip with a color
-void colorSet(uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-      strip.setPixelColor(i, c);
-  }
-   strip.show();
-   delay(wait);
-}

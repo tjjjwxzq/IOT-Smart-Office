@@ -61,8 +61,8 @@ public class DeviceScanActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_scan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.title_devices);
         setSupportActionBar(toolbar);
-        getActionBar().setTitle(R.string.title_devices);
         mHandler = new Handler();
 
         mDeviceListView = (ListView) findViewById(R.id.listview_devices);
