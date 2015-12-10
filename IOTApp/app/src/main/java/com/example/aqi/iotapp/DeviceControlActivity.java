@@ -49,7 +49,7 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
 
-    private final String[] drawerArray = {"Profile", "Interval Settings", "Alert Settings"};:
+    private final String[] drawerArray = {"Profile", "Interval Settings", "Alert Settings"};
 
     private FragmentManager fragmentManager;
 
@@ -326,48 +326,18 @@ public class DeviceControlActivity extends AppCompatActivity {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 switch (position) {
                     case 0:
-                        //pops till the named fragment, non-inclusive
-                        //this will be the first AttractionLocatorFragment
-                        //started when the app is first launched
-                        fragmentManager.popBackStackImmediate(FRAG_ATTRLOC, 0);
-
-                        findViewById(R.id.myMapFragment).setVisibility(View.VISIBLE);
-
-                        transaction.replace(R.id.relative, fragmentManager.findFragmentByTag(FRAG_ATTRLOC));
-                        transaction.addToBackStack(null);
+                        fragment = new ProfileFragment();
+                        transaction.replace(R.id.relative, fragment);
                         transaction.commit();
                         break;
                     case 1:
-
-                       //Pop up to but not including the attraction locator
-                        fragmentManager.popBackStackImmediate(FRAG_ATTRLOC,0);
-
-                        //Hide mapfragment
-                        findViewById(R.id.myMapFragment).setVisibility(View.GONE);
-
-                        fragment = new ItineraryPlannerFragment();
+                        fragment = new IntervalSettingsFragment();
                         transaction.replace(R.id.relative, fragment);
-                        transaction.addToBackStack(null);
                         transaction.commit();
                         break;
                     case 2:
-                        //Pop up to but not including the attraction locator
-                        fragmentManager.popBackStackImmediate(FRAG_ATTRLOC,0);
-
-                        //Hide mapfragment
-                        findViewById(R.id.myMapFragment).setVisibility(View.GONE);
-
-                        if(fragmentManager.findFragmentByTag(FRAG_BUDGET)==null)
-                        {
-                            fragment = new BudgetManagerFragment();
-                            transaction.replace(R.id.relative, fragment,FRAG_BUDGET);
-                        }
-                        else
-                        {
-                           transaction.replace(R.id.relative, frag_attrloc);
-                        }
-
-                        transaction.addToBackStack(null);
+                        fragment = new AlertSettingsFragment();
+                        transaction.replace(R.id.relative, fragment);
                         transaction.commit();
                         break;
                                    }
