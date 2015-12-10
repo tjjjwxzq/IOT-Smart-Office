@@ -11,13 +11,21 @@ int MOTORpin = 11;      // connect Red LED to pin 11 (PWM pin)
 int fsrReading;      // the analog reading from the FSR resistor divider
 int MotorSpeed;
 double Timer;
+double BuzzTimer;
 double lastSittingDur;
+double BuzzLimit;
+double FirstBuzzTime;
+double BuzzCycle;
  
 void setup(void) {
   Serial.begin(9600);   // We'll send debugging information via the Serial monitor
   pinMode(MOTORpin, OUTPUT);
   Timer = 0;
+  BuzzTimer = 0;
   lastSittingDur = 0;
+  BuzzLimit = 3;
+  BuzzCycle = 10;
+  FirstBuzzTime = 10;
 }
  
 void loop(void) {
@@ -34,14 +42,23 @@ void loop(void) {
   MotorSpeed = map(fsrReading, 0, 1023, 0, 255);
   // MOTOR goes faster the harder you press
   if (fsrReading > 850 && Timer >= 10){
-     analogWrite(MOTORpin, fsrReading);
-     Timer = Timer + 0.1; 
+     if (BuzzTimer <= BuzzCycle){
+        BuzzTimer= BuzzTimer + 0.1; 
+     } else {
+        BuzzTimer=0; 
+     }
+     Timer = Timer + 0.1;
+     if (BuzzTimer <= BuzzLimit) {
+        analogWrite(MOTORpin, fsrReading);
+     } else {
+        analogWrite(MOTORpin, 0);
+     } 
   } else if (fsrReading >= 850) {
      analogWrite(MOTORpin, 0);
      Timer = Timer + 0.1; 
   } else {
      analogWrite(MOTORpin, 0);
-     if (Timer > 10) {
+     if (Timer > FirstBuzzTime) {
         lastSittingDur = Timer;
         Timer = 0;
      } else {
