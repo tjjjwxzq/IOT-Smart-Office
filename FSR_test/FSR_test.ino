@@ -10,22 +10,35 @@ int fsrAnalogPin = 0; // FSR is connected to analog 0
 int MOTORpin = 11;      // connect Red LED to pin 11 (PWM pin)
 int fsrReading;      // the analog reading from the FSR resistor divider
 int MotorSpeed;
+double Timer;
  
 void setup(void) {
   Serial.begin(9600);   // We'll send debugging information via the Serial monitor
   pinMode(MOTORpin, OUTPUT);
+  Timer = 0;
 }
  
 void loop(void) {
   fsrReading = analogRead(fsrAnalogPin);
   Serial.print("Analog reading = ");
-  Serial.println(fsrReading);
+  Serial.print(fsrReading);
+  Serial.print(", Timer = ");
+  Serial.println(Timer);
  
   // we'll need to change the range from the analog reading (0-1023) down to the range
   // used by analogWrite (0-255) with map!
   MotorSpeed = map(fsrReading, 0, 1023, 0, 255);
   // MOTOR goes faster the harder you press
-  analogWrite(MOTORpin, MotorSpeed);
+  if (fsrReading > 850 && Timer >= 10){
+     analogWrite(MOTORpin, fsrReading);
+     Timer = Timer + 0.1; 
+  } else if (fsrReading >= 850) {
+     analogWrite(MOTORpin, 0);
+     Timer = Timer + 0.1; 
+  } else {
+     analogWrite(MOTORpin, 0);
+     Timer = 0; 
+  }
  
   delay(100);
 }
