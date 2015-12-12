@@ -55,6 +55,12 @@
             android:label="@string/title_activity_alert"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+
+        <activity
+            android:name="com.google.android.youtube.api.S"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            />
+
     </application>
 
 </manifest>

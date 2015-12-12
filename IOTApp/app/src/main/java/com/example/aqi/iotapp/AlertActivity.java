@@ -24,7 +24,7 @@ public class AlertActivity extends AppCompatActivity {
         //Set up fragment
         fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment alertFragment = new AlertLevel1Fragment();
+        Fragment alertFragment = new AlertLevel4Fragment();
         fragmentTransaction.replace(R.id.fragment_alert, alertFragment);
         fragmentTransaction.commit();
 

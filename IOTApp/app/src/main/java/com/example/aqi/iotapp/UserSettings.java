@@ -31,7 +31,7 @@ public class UserSettings {
 
     public AlertSettings alertLevel3 = new AlertSettings(R.raw.laughteralarm, "Butts off for real!", false, 3);
 
-    public AlertSettings alertLevel4 = new AlertSettings(R.raw.laughteralarm, "You asked for it...", false, 4);
+    public AlertSettings alertLevel4 = new AlertSettings(R.raw.laughteralarm, "You asked for it...", true, 4);
 
     //Constructor with default goal and alert settings
     public UserSettings(boolean rememberMe, String name, int age, String email, String password,
