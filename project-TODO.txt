@@ -1,0 +1,6 @@
+UserSettings class
+FileUtils for reading and writing UserSettings to file
+Set up firebase email and password authentitication
+
+Figure out how to use Charts api to display sitting data to user
+

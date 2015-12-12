@@ -309,5 +309,11 @@ public class DeviceScanActivity extends AppCompatActivity{
         scanLeDevice(true);
     }
 
+    public void testAlerts(View v)
+    {
+        Intent intent = new Intent(this, AlertActivity.class);
+        startActivity(intent);
+    }
+
 
 }

@@ -1,15 +1,18 @@
 package com.example.aqi.iotapp;
 
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,21 +22,19 @@ public class MainActivity extends AppCompatActivity {
 
     final static String STARTFRAGTAG = "StartFrag";
 
+    //Default user is loaded first. Other users settings files are identified by the email
+    public static ArrayList<String> settingsFiles = new ArrayList<>(Arrays.asList("defaultt.txt"));
+
+    public static UserSettings userSettings;
+
+    private Button btnGetStarted;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         //Window flags to allow activity to
         // 1) Show over lock screens
@@ -46,13 +47,29 @@ public class MainActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-
-        if (getFragmentManager().findFragmentByTag(STARTFRAGTAG) == null ) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            StartFragment fragment = new StartFragment();
-            transaction.add(R.id.fragmentcontainer, fragment, STARTFRAGTAG);
-            transaction.commit();
+        //Load User settings
+        if(userSettings ==null)
+        {
+            userSettings = FileUtils.readUserSettings(this, settingsFiles.get(0));
         }
+
+        // Get UI refs
+        btnGetStarted = (Button) findViewById(R.id.btn_getstarted);
+
+        btnGetStarted.setOnClickListener( new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(userSettings != null && userSettings.rememberMe) {
+                    Intent intent = new Intent(getBaseContext(), DeviceScanActivity.class);
+                    startActivity(intent);
+                }else{
+                    Log.d(TAG, "going to userlogin");
+                    Intent intent = new Intent(getBaseContext(), UserLoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
     }
 
     @Override

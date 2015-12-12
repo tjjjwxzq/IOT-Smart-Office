@@ -32,50 +32,34 @@ void setup() {
    Serial.println("Test starting");
 }
 
-char Comp(char* cmpChar){
-  while(Serial.available() > 0)
-  {
-    if(index<19)
-    {
-      inChar = Serial.read();
-      inData[index] = inChar;
-      index++; 
-      inData[index] = '\0'; //Null terminate the string 
-    }
-  }
+void startAlerts(boolean enabled){
+   while(enabled){
+    currentTime = millis(); //get time since board started
 
-  if (strcmp(inData,cmpChar) == 0)
-  {
-     for(int i =0; i <19; i++)
+    if(currentTime - previousTime >= interval)
     {
-       inData[i] = 0;
+      previousTime = currentTime;
+      Serial.println("Alert");
+      mySerial.print("ALERT");
+    }  
+    
+    if(mySerial.readString().equals("Turn off alerts"))
+    {
+       break; 
     }
-    index = 0;
-    return(0); 
-  }
-  else{
-    return(1);
-  }
+   }
+
 }
 
 void loop() {
   
-  currentTime = millis(); //get time since board started
-
-  if(currentTime - previousTime >= interval)
-  {
-    previousTime = currentTime;
-    Serial.println("Alert");
-    mySerial.print("ALERT");
-
-
-  }
   // if there's any serial available, read it:
   while (mySerial.available() > 0) {
-    Serial.println(Comp("Turn on alerts"));
-    if(mySerial.read() == 'Turn on alerts')
+    
+    if(mySerial.readString().equals("Turn on alerts"))
      {
        Serial.println("Alert2");
+       startAlerts(true);
      }
     //light LED if 1 is received
     if (mySerial.read() == '1')

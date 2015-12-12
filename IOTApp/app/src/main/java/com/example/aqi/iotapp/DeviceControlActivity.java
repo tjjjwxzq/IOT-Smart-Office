@@ -1,8 +1,10 @@
 package com.example.aqi.iotapp;
 
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -24,7 +26,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.UUID;
 public class DeviceControlActivity extends AppCompatActivity {
 
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
+
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
 
@@ -53,12 +55,6 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
 
-    private TextView isSerial;
-
-    private TextView mConnectionState;
-
-    private TextView mDataField;
-
     private String mDeviceName;
 
     private String mDeviceAddress;
@@ -77,6 +73,17 @@ public class DeviceControlActivity extends AppCompatActivity {
     private final String LIST_NAME = "NAME";
 
     private final String LIST_UUID = "UUID";
+
+    final static int REQUEST_CODE =0;
+private AlarmManager alarmManager;
+
+    private PendingIntent pendingIntent;
+
+    private int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
+
+    private final int ALARM_TIME = 10000;
+
+
 
     // Code to manage Service lifecycle
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -122,20 +129,22 @@ public class DeviceControlActivity extends AppCompatActivity {
                 // Show all the supported services and characteristics on the user interface
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                // Respond to bluetooth data here
+
                 displayData(intent.getStringExtra(mBluetoothLeService.EXTRA_DATA));
             }
         }
     };
 
     private void clearUI() {
-        mDataField.setText(R.string.no_data);
+        DeviceControlFragment.mDataField.setText(R.string.no_data);
     }
 
     private void updateConnectionState(final int resourceId) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mConnectionState.setText(resourceId);
+                DeviceControlFragment.mConnectionState.setText(resourceId);
             }
         });
     }
@@ -143,8 +152,7 @@ public class DeviceControlActivity extends AppCompatActivity {
     private void displayData(String data) {
         if (data != null) {
             Log.i(TAG, "Data:" + data);
-
-            mDataField.setText(data);
+            DeviceControlFragment.mDataField.setText(data);
         }
     }
 
@@ -166,9 +174,9 @@ public class DeviceControlActivity extends AppCompatActivity {
 
             // If the service exists for HM 10 Serial, say so
             if (SampleGattAttributes.lookup(uuid, unknownServiceString) == "HM 10 Serial") {
-                isSerial.setText("Yes, serial :-)");
+                DeviceControlFragment.isSerial.setText("Yes, serial :-)");
             } else {
-                isSerial.setText("No, serial :-(");
+                DeviceControlFragment.isSerial.setText("No, serial :-(");
             }
             currentServiceData.put(LIST_UUID, uuid);
             gattServiceData.add(currentServiceData);
@@ -176,7 +184,6 @@ public class DeviceControlActivity extends AppCompatActivity {
             // get characterstic when UUID matches RX/TX UUID
             characteristicTX = gattService.getCharacteristic(BluetoothLeService.UUID_HM_RX_TX);
             characteristicRX = gattService.getCharacteristic(BluetoothLeService.UUID_HM_RX_TX);
-
 
         }
     }
@@ -203,18 +210,38 @@ public class DeviceControlActivity extends AppCompatActivity {
         }
     }
 
-    // Send signal to arduino to start alerts
-    public void btnTurnOnAlerts(View view)
-    {
-        String str = "Turn on alerts~";
-        final byte[] tx=  str.getBytes();
-        if(mConnected)
-        {
-            characteristicTX.setValue(tx);
-            mBluetoothLeService.writeCharacteristic(characteristicTX);
-            mBluetoothLeService.setCharacteristicNotification(characteristicRX,true);
+    //On click listener to turn on alerts
+    View.OnClickListener btnTurnOnAlerts = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            DeviceControlFragment.btnAlerts.setText(R.string.btn_turnoffalers);
+            DeviceControlFragment.btnAlerts.setOnClickListener(btnTurnOffAlerts);
+            String str = "Turn on alerts";
+            final byte[] tx=  str.getBytes();
+            if(mConnected)
+            {
+                characteristicTX.setValue(tx);
+                mBluetoothLeService.writeCharacteristic(characteristicTX);
+                mBluetoothLeService.setCharacteristicNotification(characteristicRX,true);
+            }
         }
-    }
+    };
+
+    View.OnClickListener btnTurnOffAlerts = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            DeviceControlFragment.btnAlerts.setText(R.string.btn_turnonalerts);
+            DeviceControlFragment.btnAlerts.setOnClickListener(btnTurnOnAlerts);
+            String str = "Turn off alerts";
+            final byte[] tx=  str.getBytes();
+            if(mConnected)
+            {
+                characteristicTX.setValue(tx);
+                mBluetoothLeService.writeCharacteristic(characteristicTX);
+            }
+        }
+
+    };
 
     public void btnSettings(View view)
     {
@@ -233,8 +260,9 @@ public class DeviceControlActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fragmentManager = getFragmentManager();
+        toolbar.setTitle(R.string.title_devices);
 
+        fragmentManager = getFragmentManager();
 
         //Set up navigation drawer
         mDrawerList = (ListView)findViewById(R.id.left_drawer);
@@ -244,21 +272,51 @@ public class DeviceControlActivity extends AppCompatActivity {
         addDrawerItems();
         setupDrawer();
 
+        DeviceControlFragment.btnAlerts.setOnClickListener(btnTurnOnAlerts);
+
+        // Bind BluetoothLeService
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-
-        // Set up UI references
-        ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
-        mConnectionState = (TextView) findViewById(R.id.connection_state);
-        // is serial present?
-        isSerial = (TextView) findViewById(R.id.isSerial);
-
-        mDataField = (TextView) findViewById(R.id.data_value);
-
-        toolbar.setTitle(R.string.title_devices);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent,mServiceConnection, BIND_AUTO_CREATE);
+
+
+        /*//Get Vibrator
+        Vibrator vib = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        vib.vibrate(500);
+
+        ////SETTING UP ALARM///
+        //Create an intent for explicitly executing a hard-coded class(component) name
+        // First create an intent for the alarm to activate.
+        // This code simply starts an Activity, or brings it to the front if it has already
+        // been created.
+        Intent alarmintent = new Intent(this, DeviceControlActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+
+        // Because the intent must be fired by a system service from outside the application,
+        // it's necessary to wrap it in a PendingIntent.  Providing a different process with
+        // a PendingIntent gives that other process permission to fire the intent that this
+        // application has created.
+        // Also, this code creates a PendingIntent to start an Activity.  To create a
+        // BroadcastIntent instead, simply call getBroadcast instead of getIntent.
+        pendingIntent = PendingIntent.getActivity(this, REQUEST_CODE,
+                alarmintent, 0);
+
+        // The AlarmManager, like most system services, isn't created by application code, but
+        // requested from the system.
+        alarmManager = (AlarmManager)
+                this.getSystemService(this.ALARM_SERVICE);
+
+        // setRepeating takes a start delay and period between alarms as arguments.
+        // The below code fires after 15 seconds, and repeats every 15 seconds.  This is very
+        // useful for demonstration purposes, but horrendous for production.  Don't be that dev.
+        alarmManager.setRepeating(alarmType, SystemClock.elapsedRealtime() + ALARM_TIME,
+         ALARM_TIME, pendingIntent);*/
+
+
+
+
     }
 
     @Override
@@ -283,6 +341,9 @@ public class DeviceControlActivity extends AppCompatActivity {
         super.onDestroy();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
+
+        if(alarmManager != null)
+            alarmManager.cancel(pendingIntent);
     }
 
     @Override
@@ -340,7 +401,7 @@ public class DeviceControlActivity extends AppCompatActivity {
                         transaction.replace(R.id.relative, fragment);
                         transaction.commit();
                         break;
-                                   }
+                }
                 setTitle(drawerArray[position]);
                 mDrawerLayout.closeDrawer(mDrawerList);
             }

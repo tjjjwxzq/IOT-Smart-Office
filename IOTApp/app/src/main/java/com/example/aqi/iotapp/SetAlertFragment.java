@@ -3,8 +3,6 @@ package com.example.aqi.iotapp;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.PendingIntent;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,17 +31,13 @@ public class SetAlertFragment extends Fragment {
 
     final static int REQUEST_CODE =0;
 
-    private BluetoothManager bluetoothManager;
-
-    private BluetoothAdapter bluetoothAdapter;
-
     private AlarmManager alarmManager;
 
     private PendingIntent pendingIntent;
 
     private int alarmType = AlarmManager.ELAPSED_REALTIME;
 
-    private final int ALARM_TIME = 5000;
+    private final int ALARM_TIME = 4000;
 
 
     public SetAlertFragment() {
@@ -57,9 +51,6 @@ public class SetAlertFragment extends Fragment {
         //Get Vibrator
         Vibrator vib = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         vib.vibrate(500);
-
-        bluetoothManager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
 
         ////SETTING UP ALARM///
         //Create an intent for explicitly executing a hard-coded class(component) name

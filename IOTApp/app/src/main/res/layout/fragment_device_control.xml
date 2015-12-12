@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:padding="@dimen/activity_horizontal_margin"
+android:layout_marginTop="50dp">
+
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_device_address"
+        android:textSize="18sp"/>
+    <Space android:layout_width="5dp"
+        android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/device_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"/>
+</LinearLayout>
+<LinearLayout android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_state"
+        android:textSize="18sp"/>
+    <Space android:layout_width="5dp"
+        android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/connection_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/disconnected"
+        android:textSize="18sp"/>
+</LinearLayout>
+<LinearLayout android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_data"
+        android:textSize="18sp"/>
+    <Space android:layout_width="5dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/data_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data"
+        android:textSize="18sp" />
+
+</LinearLayout>
+<TextView
+    android:id="@+id/isSerial"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/is_serial"
+    android:textSize="18sp"/>
+
+<Button
+    android:id="@+id/ledButton"
+    android:text="Turn on led"
+    android:onClick="onLed"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+
+
+<Button
+    android:id="@+id/btn_turnonalerts"
+    android:text="@string/btn_turnonalerts"
+    android:onClick="btnTurnOnAlerts"
+    android:layout_gravity="center_horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+
+<Button
+    android:id="@+id/btn_settings"
+    android:text="Settings"
+    android:onClick="btnSettings"
+    android:layout_gravity="center_horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+
+</LinearLayout>
+
