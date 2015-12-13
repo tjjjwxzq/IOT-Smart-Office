@@ -21,5 +21,24 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Default Settings"
+        android:id="@+id/todefault_time"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="26dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Changes"
+        android:id="@+id/save_time"
+        android:layout_alignBottom="@+id/todefault_time"
+        android:layout_toStartOf="@+id/todefault_time"
+        android:layout_marginEnd="27dp" />
+
 
 </RelativeLayout>

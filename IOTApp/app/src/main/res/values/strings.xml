@@ -51,4 +51,23 @@
         <item>2 hours</item>
     </string-array>
 
+    <string-array name = "alert_sounds">
+        <item>sound1</item>
+        <item>sound2</item>
+        <item>sound3</item>
+        <item>sound4</item>
+    </string-array>
+
+    <string-array name = "vid_timing">
+        <item>Level 1</item>
+        <item>Level 2</item>
+        <item>Level 3</item>
+        <item>Level 4</item>
+    </string-array>
+
+    <string-array name = "vib_strength">
+        <item>Weak</item>
+        <item>Normal</item>
+        <item>Strong</item>
+    </string-array>
 </resources>
