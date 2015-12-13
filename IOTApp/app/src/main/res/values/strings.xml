@@ -44,4 +44,11 @@
     <string name="title_activity_user_login">UserLoginActivity</string>
     <string name="title_activity_alert">AlertActivity</string>
 
+    <string-array name = "time_intervals">
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>1 hour 30 mins</item>
+        <item>2 hours</item>
+    </string-array>
+
 </resources>
