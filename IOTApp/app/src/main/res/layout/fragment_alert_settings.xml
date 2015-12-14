@@ -1,10 +1,78 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.aqi.iotapp.AlertSettingsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <TextView android:layout_width = "match_parent"
+        android:layout_height="55dp"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:text = "Alert Sound"
+        android:textSize = "20sp"
+        android:id = "@+id/soundText" />
 
-</FrameLayout>
+    <Spinner
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/alertChoices"
+        android:entries="@array/alert_sounds"
+        android:layout_below="@+id/soundText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView android:layout_width = "match_parent"
+        android:layout_height="55dp"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:text = "Play Exercise Videos at:"
+        android:textSize = "20sp"
+        android:id = "@+id/videosText"
+        android:layout_below="@+id/alertChoices"/>
+
+    <Spinner
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/videosChoices"
+        android:entries="@array/alert_sounds"
+        android:layout_below="@+id/videosText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView android:layout_width = "match_parent"
+        android:layout_height="55dp"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:text = "Play Exercise Videos at:"
+        android:textSize = "20sp"
+        android:id = "@+id/vibText"
+        android:layout_below="@+id/videosChoices"/>
+
+    <Spinner
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/vibChoices"
+        android:entries="@array/vib_strength"
+        android:layout_below="@+id/vibText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Default Settings"
+        android:id="@+id/todefault_alert"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="26dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Changes"
+        android:id="@+id/save_alert"
+        android:layout_alignBottom="@+id/todefault"
+        android:layout_toStartOf="@+id/todefault"
+        android:layout_marginEnd="27dp" />
+</RelativeLayout>

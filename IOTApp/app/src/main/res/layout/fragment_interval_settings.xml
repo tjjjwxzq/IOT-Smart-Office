@@ -1,10 +1,44 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.aqi.iotapp.IntervalSettingsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <TextView android:layout_width = "match_parent"
+        android:layout_height="55dp"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:text = "Preferred Time Interval"
+        android:textSize = "20sp"
+        android:id = "@+id/timeText" />
 
-</FrameLayout>
+    <Spinner
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeIntervalChoices"
+        android:entries="@array/time_intervals"
+        android:layout_below="@+id/timeText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Default Settings"
+        android:id="@+id/todefault_time"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="26dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Changes"
+        android:id="@+id/save_time"
+        android:layout_alignBottom="@+id/todefault_time"
+        android:layout_toStartOf="@+id/todefault_time"
+        android:layout_marginEnd="27dp" />
+
+
+</RelativeLayout>

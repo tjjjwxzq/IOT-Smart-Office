@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IOTApp</string>
+    <string name="app_name">NO BUTTS!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_device_control">DeviceControlActivity</string>
 
@@ -44,4 +44,30 @@
     <string name="title_activity_user_login">UserLoginActivity</string>
     <string name="title_activity_alert">AlertActivity</string>
 
+    <string-array name = "time_intervals">
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>1 hour 30 mins</item>
+        <item>2 hours</item>
+    </string-array>
+
+    <string-array name = "alert_sounds">
+        <item>sound1</item>
+        <item>sound2</item>
+        <item>sound3</item>
+        <item>sound4</item>
+    </string-array>
+
+    <string-array name = "vid_timing">
+        <item>Level 1</item>
+        <item>Level 2</item>
+        <item>Level 3</item>
+        <item>Level 4</item>
+    </string-array>
+
+    <string-array name = "vib_strength">
+        <item>Weak</item>
+        <item>Normal</item>
+        <item>Strong</item>
+    </string-array>
 </resources>
