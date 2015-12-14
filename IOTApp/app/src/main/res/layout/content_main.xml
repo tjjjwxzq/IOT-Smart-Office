@@ -14,5 +14,11 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="false" />
 
+    <fragment
+        android:id="@+id/frag_test"
+        android:name="com.example.aqi.iotapp.ActivityLogFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 
 </RelativeLayout>

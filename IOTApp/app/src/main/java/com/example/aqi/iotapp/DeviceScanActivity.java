@@ -23,6 +23,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -89,6 +91,10 @@ public class DeviceScanActivity extends AppCompatActivity{
             finish();
             return;
         }
+
+        //Get Firebase data for the current user
+        FirebaseController.setUpFirebase();
+        //FirebaseController.readFirebase();
     }
 
     @Override
@@ -313,6 +319,13 @@ public class DeviceScanActivity extends AppCompatActivity{
     {
         Intent intent = new Intent(this, AlertActivity.class);
         startActivity(intent);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+              = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 

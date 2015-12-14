@@ -1,5 +1,6 @@
 package com.example.aqi.iotapp;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+
+import com.firebase.client.Firebase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     final static String STARTFRAGTAG = "StartFrag";
 
     //Default user is loaded first. Other users settings files are identified by the email
-    public static ArrayList<String> settingsFiles = new ArrayList<>(Arrays.asList("defaultt.txt"));
+    public static ArrayList<String> settingsFiles = new ArrayList<>(Arrays.asList("default.txt"));
 
     public static UserSettings userSettings;
 
@@ -56,20 +59,31 @@ public class MainActivity extends AppCompatActivity {
         // Get UI refs
         btnGetStarted = (Button) findViewById(R.id.btn_getstarted);
 
-        btnGetStarted.setOnClickListener( new View.OnClickListener(){
+        btnGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                if(userSettings != null && userSettings.rememberMe) {
+            public void onClick(View v) {
+                if (userSettings != null && userSettings.rememberMe) {
                     Intent intent = new Intent(getBaseContext(), DeviceScanActivity.class);
                     startActivity(intent);
-                }else{
+                } else {
                     Log.d(TAG, "going to userlogin");
                     Intent intent = new Intent(getBaseContext(), UserLoginActivity.class);
                     startActivity(intent);
                 }
             }
+
         });
 
+        //Set up firebase context
+        Firebase.setAndroidContext(getApplicationContext());
+
+        FirebaseController.setUpFirebase();
+
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        ActivityLogFragment fragment = new ActivityLogFragment();
+        transaction.add(R.id.frag_test, fragment);
+        transaction.commit();
     }
 
     @Override

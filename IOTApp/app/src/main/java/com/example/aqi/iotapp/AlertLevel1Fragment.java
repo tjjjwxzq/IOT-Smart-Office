@@ -2,6 +2,8 @@ package com.example.aqi.iotapp;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,6 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
+
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,11 +27,19 @@ public class AlertLevel1Fragment extends Fragment {
 
     private static final String TAG = AlertLevel1Fragment.class.getSimpleName();
 
-    private View root;
+    private static final int REQ_START_STANDALONE_PLAYER = 1;
+
+    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
 
     private final int ALARM_DURATION = 10000;
 
     private final long[] VIBRATE_PATTERN = {0,1000, 1000};
+
+    private final String EXERCISE_VID_ID = "CKjaFG4YN6g";
+
+    private Intent youtubeIntent;
+
+    private View root;
 
     private AlertSettings alertSettings;
 
@@ -42,10 +57,43 @@ public class AlertLevel1Fragment extends Fragment {
 
         alertSettings = MainActivity.userSettings.alertLevel1;
 
-        // Set up media player
-        mediaPlayer = MediaPlayer.create(getActivity(), alertSettings.alertSoundResource);
-        mediaPlayer.start();
-        mediaPlayer.setLooping(true);
+        // Set up youtube standalone player or media player
+        if(alertSettings.playExerciseVids) {
+            youtubeIntent = YouTubeStandalonePlayer.createVideoIntent(getActivity(),
+                    YoutubeDeveloperKey.YOUTUBE_API_KEY, EXERCISE_VID_ID, 40000, true, true);
+            Log.d(TAG, "INtent" + youtubeIntent);
+
+            // Set up timer for youtube video
+            CountDownTimer youtubeTimer = new CountDownTimer(1000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    if (youtubeIntent != null) {
+                      if (canResolveIntent(youtubeIntent)) {
+                          Log.d(TAG, "Starting youtubeintet");
+                        startActivityForResult(youtubeIntent, REQ_START_STANDALONE_PLAYER);
+                      } else {
+                        // Could not resolve the intent - must need to install or update the YouTube API service.
+                        YouTubeInitializationResult.SERVICE_MISSING
+                            .getErrorDialog(getActivity(), REQ_RESOLVE_SERVICE_MISSING).show();
+                      }
+                    }
+                }
+            };
+            youtubeTimer.start();
+
+
+        }else {
+            mediaPlayer = MediaPlayer.create(getActivity(), alertSettings.alertSoundResource);
+            mediaPlayer.start();
+            mediaPlayer.setLooping(true);
+        }
+
 
         //Get Vibrator
         final Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -69,6 +117,7 @@ public class AlertLevel1Fragment extends Fragment {
                     mediaPlayer.release();
                 }
                 vibrator.cancel();
+                closeFragment();
             }
         };
 
@@ -91,4 +140,18 @@ public class AlertLevel1Fragment extends Fragment {
         return root;
     }
 
+    private boolean canResolveIntent(Intent intent) {
+        List<ResolveInfo> resolveInfo = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+        return resolveInfo != null && !resolveInfo.isEmpty();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void closeFragment()
+    {
+        getActivity().getFragmentManager().beginTransaction().remove(this).commit();
+    }
 }

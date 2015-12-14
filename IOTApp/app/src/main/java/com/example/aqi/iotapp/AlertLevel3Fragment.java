@@ -1,51 +1,51 @@
 package com.example.aqi.iotapp;
 
-import android.app.Activity;
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Vibrator;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
+
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AlertLevel3Fragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AlertLevel3Fragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class AlertLevel3Fragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = AlertLevel3Fragment.class.getSimpleName();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final int REQ_START_STANDALONE_PLAYER = 1;
 
-    private OnFragmentInteractionListener mListener;
+    private static final int REQ_RESOLVE_SERVICE_MISSING = 2;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AlertLevel3Fragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AlertLevel3Fragment newInstance(String param1, String param2) {
-        AlertLevel3Fragment fragment = new AlertLevel3Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private final int ALARM_DURATION = 10000;
+
+    private final long[] VIBRATE_PATTERN = {0,1000, 1000};
+
+    private final String EXERCISE_VID_ID = "CKjaFG4YN6g";
+
+    private View root;
+
+    private Intent youtubeIntent;
+
+    private AlertSettings alertSettings;
+
+    private MediaPlayer mediaPlayer;
+
+    private TextView textAlertMessage;
+
 
     public AlertLevel3Fragment() {
         // Required empty public constructor
@@ -54,56 +54,98 @@ public class AlertLevel3Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
+        alertSettings = MainActivity.userSettings.alertLevel3;
+
+        // Set up youtube standalone player or media player
+        if(alertSettings.playExerciseVids) {
+            youtubeIntent = YouTubeStandalonePlayer.createVideoIntent(getActivity(),
+                    YoutubeDeveloperKey.YOUTUBE_API_KEY, EXERCISE_VID_ID, 40000, true, true);
+
+            // Set up timer for youtube video
+            CountDownTimer youtubeTimer = new CountDownTimer(1000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                }
+
+                @Override
+                public void onFinish() {
+
+                    if (youtubeIntent != null) {
+                      if (canResolveIntent(youtubeIntent)) {
+                          Log.d(TAG, "Starting youtubeintet");
+                        startActivityForResult(youtubeIntent, REQ_START_STANDALONE_PLAYER);
+                      } else {
+                        // Could not resolve the intent - must need to install or update the YouTube API service.
+                        YouTubeInitializationResult.SERVICE_MISSING
+                            .getErrorDialog(getActivity(), REQ_RESOLVE_SERVICE_MISSING).show();
+                      }
+                    }
+                }
+            };
+            youtubeTimer.start();
+
+
+        }else {
+            mediaPlayer = MediaPlayer.create(getActivity(), alertSettings.alertSoundResource);
+            mediaPlayer.start();
+            mediaPlayer.setLooping(true);
         }
+
+        //Get Vibrator
+        final Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(VIBRATE_PATTERN, 0);
+
+
+        //Set up timer
+        CountDownTimer timer = new CountDownTimer(ALARM_DURATION, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                Log.d(TAG, millisUntilFinished + " till finished");
+            }
+
+            @Override
+            public void onFinish() {
+                Log.d(TAG, "Finished");
+                if(mediaPlayer!=null && mediaPlayer.isPlaying())
+                {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                }
+                vibrator.cancel();
+                closeFragment();
+
+            }
+        };
+
+        timer.start();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_alert_level3, container, false);
+        root = inflater.inflate(R.layout.fragment_alert_level4, container, false);
+
+        //Get UI refs
+        textAlertMessage = (TextView) root.findViewById(R.id.text_alertlevel1);
+        textAlertMessage.setText(alertSettings.alertMessage);
+
+        return root;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    private boolean canResolveIntent(Intent intent) {
+        List<ResolveInfo> resolveInfo = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+        return resolveInfo != null && !resolveInfo.isEmpty();
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    private void closeFragment()
+    {
+        getActivity().getFragmentManager().beginTransaction().remove(this).commit();
     }
-
 }

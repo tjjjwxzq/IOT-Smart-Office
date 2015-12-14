@@ -1,6 +1,11 @@
-UserSettings class
-FileUtils for reading and writing UserSettings to file
-Set up firebase email and password authentitication
+DONE UserSettings class
+DONE FileUtils for reading and writing UserSettings to file
+DONE Set up firebase email and password authentitication
+Save new user info to firebase
+Save new user data to firebase
+Update user info on firebase
+Update user data on firebase
+
 
 Figure out how to use Charts api to display sitting data to user
 

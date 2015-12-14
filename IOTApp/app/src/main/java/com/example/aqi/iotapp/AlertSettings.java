@@ -13,6 +13,8 @@ public class AlertSettings {
 
     public int vibrationStrength = 1; // scale out of 5
 
+    public int upTimeInterval = 30; // no. of seconds user should stay up for alert to be dismissed
+
     //Default constructor
     public AlertSettings() {}
 

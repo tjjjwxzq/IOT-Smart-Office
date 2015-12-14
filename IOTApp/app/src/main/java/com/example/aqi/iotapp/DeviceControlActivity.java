@@ -32,7 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class DeviceControlActivity extends AppCompatActivity {
+public class DeviceControlActivity extends AppCompatActivity
+implements DeviceControlFragment.btnAlertsListener{
 
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
@@ -54,6 +55,10 @@ public class DeviceControlActivity extends AppCompatActivity {
     private final String[] drawerArray = {"Profile", "Interval Settings", "Alert Settings"};
 
     private FragmentManager fragmentManager;
+
+    private FragmentTransaction fragmentTransaction;
+
+    private DeviceControlFragment deviceControlFragment;
 
     private String mDeviceName;
 
@@ -86,7 +91,7 @@ private AlarmManager alarmManager;
 
 
     // Code to manage Service lifecycle
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+    public final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
@@ -118,6 +123,7 @@ private AlarmManager alarmManager;
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
+                Log.d(TAG, "connected?" + mConnected);
                 updateConnectionState(R.string.connected);
                 invalidateOptionsMenu();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
@@ -137,22 +143,60 @@ private AlarmManager alarmManager;
     };
 
     private void clearUI() {
-        DeviceControlFragment.mDataField.setText(R.string.no_data);
+        deviceControlFragment.mDataField.setText(R.string.no_data);
     }
 
     private void updateConnectionState(final int resourceId) {
+        Log.d(TAG, "Updating conenction state");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                DeviceControlFragment.mConnectionState.setText(resourceId);
+                deviceControlFragment.mConnectionState.setText(resourceId);
+                Log.d(TAG, "connection text" + deviceControlFragment.mConnectionState.getText().toString());
             }
         });
+
     }
 
-    private void displayData(String data) {
+    private void displayData(String mdata) {
+        String[] strArr = mdata.split("\\+");
+        String data = strArr[0];
         if (data != null) {
             Log.i(TAG, "Data:" + data);
-            DeviceControlFragment.mDataField.setText(data);
+            deviceControlFragment.mDataField.setText(data);
+            Intent intent;
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            switch(data){
+
+                case "totalSittingDuration":
+                    Log.d(TAG, "totalSittingDuration" + strArr[1]);
+                    FirebaseController.updateFirebase(strArr[0], Integer.parseInt(strArr[1]));
+                    break;
+                case "sittingTimes":
+                    Log.d(TAG, "sittingTimes" + strArr[1]);
+                    FirebaseController.updateFirebase(strArr[0], 0);
+                case "Alert Level 1":
+                    AlertLevel1Fragment alertLevel1Fragment = new AlertLevel1Fragment();
+                    fragmentTransaction.replace(R.id.fragment_control,alertLevel1Fragment);
+                    fragmentTransaction.commit();
+                    break;
+                case "Alert Level 2":
+                    AlertLevel2Fragment alertLevel2Fragment = new AlertLevel2Fragment();
+                    fragmentTransaction.replace(R.id.fragment_control,alertLevel2Fragment);
+                    fragmentTransaction.commit();
+                    break;
+                case "Alert Level 3":
+                    AlertLevel3Fragment alertLevel3Fragment = new AlertLevel3Fragment();
+                    fragmentTransaction.replace(R.id.fragment_control,alertLevel3Fragment);
+                    fragmentTransaction.commit();
+                    break;
+                case "Alert Level 4":
+                    AlertLevel4Fragment alertLevel4Fragment = new AlertLevel4Fragment();
+                    fragmentTransaction.replace(R.id.fragment_control,alertLevel4Fragment);
+                    fragmentTransaction.commit();
+                    break;
+
+            }
         }
     }
 
@@ -174,9 +218,10 @@ private AlarmManager alarmManager;
 
             // If the service exists for HM 10 Serial, say so
             if (SampleGattAttributes.lookup(uuid, unknownServiceString) == "HM 10 Serial") {
-                DeviceControlFragment.isSerial.setText("Yes, serial :-)");
+                deviceControlFragment.isSerial.setText("Yes, serial :-)");
+                Log.d(TAG, "SERIAL?" + deviceControlFragment.isSerial.getText().toString());
             } else {
-                DeviceControlFragment.isSerial.setText("No, serial :-(");
+                deviceControlFragment.isSerial.setText("No, serial :-(");
             }
             currentServiceData.put(LIST_UUID, uuid);
             gattServiceData.add(currentServiceData);
@@ -197,51 +242,29 @@ private AlarmManager alarmManager;
         return intentFilter;
     }
 
-    // Write characteristic to turn on Arduino LED
-    public void onLed(View view){
-        String str = "1";
-        Log.d(TAG, "Sending LED signal = " + str);
-        final byte[] tx = str.getBytes();
+    //On click listener to turn on alerts
+    public void btnTurnOnAlerts(){
+        Log.d(TAG, "turning on alerts");
+        String str = "Turn on alerts";
+        final byte[] tx=  str.getBytes();
         if(mConnected)
         {
             characteristicTX.setValue(tx);
             mBluetoothLeService.writeCharacteristic(characteristicTX);
-            mBluetoothLeService.setCharacteristicNotification(characteristicRX, true);
+            mBluetoothLeService.setCharacteristicNotification(characteristicRX,true);
         }
     }
 
-    //On click listener to turn on alerts
-    View.OnClickListener btnTurnOnAlerts = new View.OnClickListener(){
-        @Override
-        public void onClick(View v){
-            DeviceControlFragment.btnAlerts.setText(R.string.btn_turnoffalers);
-            DeviceControlFragment.btnAlerts.setOnClickListener(btnTurnOffAlerts);
-            String str = "Turn on alerts";
-            final byte[] tx=  str.getBytes();
-            if(mConnected)
-            {
-                characteristicTX.setValue(tx);
-                mBluetoothLeService.writeCharacteristic(characteristicTX);
-                mBluetoothLeService.setCharacteristicNotification(characteristicRX,true);
-            }
-        }
-    };
-
-    View.OnClickListener btnTurnOffAlerts = new View.OnClickListener(){
-        @Override
-        public void onClick(View v){
-            DeviceControlFragment.btnAlerts.setText(R.string.btn_turnonalerts);
-            DeviceControlFragment.btnAlerts.setOnClickListener(btnTurnOnAlerts);
-            String str = "Turn off alerts";
-            final byte[] tx=  str.getBytes();
-            if(mConnected)
-            {
-                characteristicTX.setValue(tx);
-                mBluetoothLeService.writeCharacteristic(characteristicTX);
-            }
+    public void btnTurnOffAlerts(){
+        String str = "Turn off alerts";
+        final byte[] tx=  str.getBytes();
+        if(mConnected)
+        {
+            characteristicTX.setValue(tx);
+            mBluetoothLeService.writeCharacteristic(characteristicTX);
         }
 
-    };
+    }
 
     public void btnSettings(View view)
     {
@@ -263,6 +286,10 @@ private AlarmManager alarmManager;
         toolbar.setTitle(R.string.title_devices);
 
         fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        deviceControlFragment = new DeviceControlFragment();
+        fragmentTransaction.replace(R.id.fragment_control, deviceControlFragment);
+        fragmentTransaction.commit();
 
         //Set up navigation drawer
         mDrawerList = (ListView)findViewById(R.id.left_drawer);
@@ -272,7 +299,6 @@ private AlarmManager alarmManager;
         addDrawerItems();
         setupDrawer();
 
-        DeviceControlFragment.btnAlerts.setOnClickListener(btnTurnOnAlerts);
 
         // Bind BluetoothLeService
         final Intent intent = getIntent();
@@ -388,17 +414,17 @@ private AlarmManager alarmManager;
                 switch (position) {
                     case 0:
                         fragment = new ProfileFragment();
-                        transaction.replace(R.id.relative, fragment);
+                        transaction.replace(R.id.fragment_control, fragment);
                         transaction.commit();
                         break;
                     case 1:
                         fragment = new IntervalSettingsFragment();
-                        transaction.replace(R.id.relative, fragment);
+                        transaction.replace(R.id.fragment_control, fragment);
                         transaction.commit();
                         break;
                     case 2:
                         fragment = new AlertSettingsFragment();
-                        transaction.replace(R.id.relative, fragment);
+                        transaction.replace(R.id.fragment_control, fragment);
                         transaction.commit();
                         break;
                 }

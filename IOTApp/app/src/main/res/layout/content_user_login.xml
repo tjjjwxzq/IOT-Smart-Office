@@ -10,6 +10,13 @@
     tools:showIn="@layout/activity_user_login"
     tools:context="com.example.aqi.iotapp.UserLoginActivity">
 
+    <ProgressBar
+        android:id="@+id/progress_login"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:layout_width="80dp"
+        android:layout_height="80dp" />
+
     <EditText
         android:id="@+id/text_email"
         android:hint="Email"

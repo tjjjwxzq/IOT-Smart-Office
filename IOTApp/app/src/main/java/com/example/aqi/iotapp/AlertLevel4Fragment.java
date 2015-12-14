@@ -65,6 +65,31 @@ public class AlertLevel4Fragment extends Fragment {
                         YoutubeDeveloperKey.YOUTUBE_API_KEY, EXERCISE_VID_ID, 40000, true, true);
             Log.d(TAG, "INtent" + youtubeIntent);
 
+            // Set up timer for youtube video
+            CountDownTimer youtubeTimer = new CountDownTimer(1000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    if (youtubeIntent != null) {
+                      if (canResolveIntent(youtubeIntent)) {
+                          Log.d(TAG, "Starting youtubeintet");
+                        startActivityForResult(youtubeIntent, REQ_START_STANDALONE_PLAYER);
+                      } else {
+                        // Could not resolve the intent - must need to install or update the YouTube API service.
+                        YouTubeInitializationResult.SERVICE_MISSING
+                            .getErrorDialog(getActivity(), REQ_RESOLVE_SERVICE_MISSING).show();
+                      }
+                    }
+                }
+            };
+            youtubeTimer.start();
+
+
         }else {
             mediaPlayer = MediaPlayer.create(getActivity(), alertSettings.alertSoundResource);
             mediaPlayer.start();
@@ -75,39 +100,11 @@ public class AlertLevel4Fragment extends Fragment {
         final Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(VIBRATE_PATTERN, 0);
 
-
-
-        // Set up timer for youtube video
-        CountDownTimer youtubeTimer = new CountDownTimer(1000,1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-
-                if (youtubeIntent != null) {
-                  if (canResolveIntent(youtubeIntent)) {
-                      Log.d(TAG, "Starting youtubeintet");
-                    startActivityForResult(youtubeIntent, REQ_START_STANDALONE_PLAYER);
-                  } else {
-                    // Could not resolve the intent - must need to install or update the YouTube API service.
-                    YouTubeInitializationResult.SERVICE_MISSING
-                        .getErrorDialog(getActivity(), REQ_RESOLVE_SERVICE_MISSING).show();
-                  }
-                }
-            }
-        };
-        youtubeTimer.start();
-
-
         //Set up timer
         CountDownTimer timer = new CountDownTimer(ALARM_DURATION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.d(TAG, millisUntilFinished + " till finished");
-
             }
 
             @Override
@@ -119,13 +116,11 @@ public class AlertLevel4Fragment extends Fragment {
                     mediaPlayer.release();
                 }
                 vibrator.cancel();
+                closeFragment();
             }
         };
 
         timer.start();
-
-
-
 
     }
 
@@ -150,17 +145,11 @@ public class AlertLevel4Fragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        /*if (requestCode == REQ_START_STANDALONE_PLAYER && resultCode != RESULT_OK) {
-          YouTubeInitializationResult errorReason =
-              YouTubeStandalonePlayer.getReturnedInitializationResult(data);
-          if (errorReason.isUserRecoverableError()) {
-            errorReason.getErrorDialog(this, 0).show();
-          } else {
-            String errorMessage =
-                String.format(getString(R.string.error_player), errorReason.toString());
-            Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
-          }
-        }*/
+    }
+
+    private void closeFragment()
+    {
+        getActivity().getFragmentManager().beginTransaction().remove(this).commit();
     }
 }
 
