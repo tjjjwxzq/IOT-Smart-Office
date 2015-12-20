@@ -185,12 +185,14 @@ public class FirebaseController {
                 switch(key){
                     case "sittingTimes":
                         sittingTimes += 1;
+                        aveSittingDuration = ((double)totalSittingDuration)/sittingTimes;
                         dataObject = new DataObject(sittingTimes, totalSittingDuration,
                                 aveSittingDuration);
                         timeRef.setValue(dataObject);
                         break;
                     case "totalSittingDuration":
                         totalSittingDuration += (int) value;
+                        aveSittingDuration = ((double)totalSittingDuration)/sittingTimes;
                         dataObject = new DataObject(sittingTimes, totalSittingDuration,
                                 aveSittingDuration);
                         timeRef.setValue(dataObject);

@@ -1,44 +1,63 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorMainBG"
     tools:context="com.example.aqi.iotapp.IntervalSettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width = "match_parent"
-        android:layout_height="55dp"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        android:text = "Preferred Time Interval"
-        android:textSize = "20sp"
-        android:id = "@+id/timeText" />
+    <TextView
+        android:id="@+id/text_smartintervals"
+        android:text="SMART INTERVALS"
+        android:layout_marginTop="@dimen/wide_button_margin"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/check_smartintervals"
+        android:text="Enable"
+        android:checked="true"
+        android:layout_below="@id/text_smartintervals"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView android:layout_width = "wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/check_smartintervals"
+        android:text = "ALERT TIME INTERVAL"
+        android:id = "@+id/text_timeintervals" />
 
     <Spinner
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:id="@+id/timeIntervalChoices"
+        android:id="@+id/spinner_timeIntervalChoices"
         android:entries="@array/time_intervals"
-        android:layout_below="@+id/timeText"
+        android:layout_below="@+id/text_timeintervals"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Default Settings"
-        android:id="@+id/todefault_time"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="26dp" />
+        android:id="@+id/btn_defaultsettings"
+        android:background="@drawable/rounded_button"
+        android:layout_above="@+id/btn_save"
+        android:layout_margin="@dimen/wide_button_margin"
+        />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Save Changes"
-        android:id="@+id/save_time"
-        android:layout_alignBottom="@+id/todefault_time"
-        android:layout_toStartOf="@+id/todefault_time"
-        android:layout_marginEnd="27dp" />
-
+        android:id="@+id/btn_save"
+        android:background="@drawable/rounded_button"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/wide_button_margin"
+        android:layout_marginRight="@dimen/wide_button_margin"
+        android:layout_marginBottom="@dimen/wide_button_margin"
+    />
 
 </RelativeLayout>

@@ -34,7 +34,7 @@ public class AlertLevel3Fragment extends Fragment {
 
     private final long[] VIBRATE_PATTERN = {0,1000, 1000};
 
-    private final String EXERCISE_VID_ID = "CKjaFG4YN6g";
+    private final String EXERCISE_VID_ID = MainActivity.userSettings.alertLevel1.idExerciseVid;
 
     private View root;
 
@@ -146,6 +146,7 @@ public class AlertLevel3Fragment extends Fragment {
 
     private void closeFragment()
     {
-        getActivity().getFragmentManager().beginTransaction().remove(this).commit();
+        DeviceControlFragment fragment = new DeviceControlFragment();
+        getActivity().getFragmentManager().beginTransaction().replace(R.id.fragment_control,fragment).commit();
     }
 }

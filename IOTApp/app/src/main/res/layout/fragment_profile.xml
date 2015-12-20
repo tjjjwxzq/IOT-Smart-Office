@@ -2,73 +2,95 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorMainBG"
     tools:context="com.example.aqi.iotapp.ProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <TextView android:layout_width = "match_parent"
-        android:layout_height="55dp"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="10dp"
-        android:text = "Name:"
-        android:textSize = "20sp"
+        android:text = "NAME"
         android:layout_below = "@+id/profilepic"
-        android:id = "@+id/nameText"
+        android:id = "@+id/text_name"
         android:layout_gravity="center"/>
     <EditText
         android:layout_width="200dp"
-        android:paddingTop="2dp"
+        android:background="@drawable/edittextstyle"
         android:layout_height="wrap_content"
-        android:hint = "Enter name here"
-        android:id="@+id/nameEditText"
+        android:hint = "Your name"
+        android:id="@+id/edittext_name"
         android:gravity="center"
-        android:layout_below="@+id/nameText"
+        android:layout_below="@+id/text_name"
         android:layout_centerHorizontal="true" />
+
     <TextView android:layout_width = "match_parent"
-        android:layout_height="55dp"
-        android:gravity="center"
-        android:text = "Occupation:"
-        android:textSize = "20sp"
-        android:layout_below = "@+id/nameEditText"
-        android:id = "@+id/occupationText" />
-    <EditText
-        android:layout_width="200dp"
-        android:paddingTop="2dp"
         android:layout_height="wrap_content"
-        android:hint = "What do you do?"
-        android:id="@+id/occupationEditText"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:gravity="center"
-        android:layout_below="@+id/occupationText"
-        android:layout_centerHorizontal="true" />
-    <TextView android:layout_width = "match_parent"
-        android:layout_height="55dp"
-        android:gravity="center"
-        android:text = "My goal:"
-        android:textSize = "20sp"
-        android:layout_below = "@+id/occupationEditText"
-        android:id = "@+id/goalText" />
+        android:text = "AGE"
+        android:layout_below = "@+id/edittext_name"
+        android:id = "@+id/text_age" />
     <EditText
+        android:background="@drawable/edittextstyle"
         android:layout_width="200dp"
-        android:paddingTop="2dp"
+        android:layout_height="wrap_content"
+        android:hint = "Your age"
+        android:id="@+id/edittext_age"
+        android:gravity="center"
+        android:layout_below="@+id/text_age"
+        android:layout_centerHorizontal="true" />
+
+    <TextView android:layout_width = "match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        android:text = "MY GOAL"
+        android:layout_below = "@+id/edittext_age"
+        android:id = "@+id/text_goal" />
+    <EditText
+        android:background="@drawable/edittextstyle"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint = "What's your goal?"
-        android:id="@+id/goalEditText"
+        android:id="@+id/edittext_goal"
         android:gravity="center"
-        android:layout_below="@+id/goalText"
+        android:layout_below="@+id/text_goal"
         android:layout_centerHorizontal="true" />
 
+    <CheckBox
+        android:id="@+id/check_rememberme"
+        android:text="REMEMBER ME"
+        android:textColor="@color/colorTextGrey"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/edittext_goal"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <ImageView android:layout_width="match_parent"
-        android:layout_height="200dp"
+    <Button
+        android:id="@+id/btn_saveprofile"
+        android:text="Save"
+        android:background="@drawable/rounded_button"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/wide_button_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <ImageView
+        android:layout_centerHorizontal="true"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:gravity = "center"
         android:paddingTop = "30dp"
-        android:src = "@drawable/golden_retriever_puppy_smiling"
+        android:src = "@drawable/profile_graphic"
         android:id = "@+id/profilepic"/>
 
     <ImageButton android:layout_width = "wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom = "true"
-        android:layout_alignParentRight = "true"
+        android:layout_alignRight="@id/profilepic"
+        android:layout_alignBottom="@id/profilepic"
         android:paddingRight = "5dp"
         android:paddingBottom = "5dp"
         android:src = "@drawable/editbutton"/>

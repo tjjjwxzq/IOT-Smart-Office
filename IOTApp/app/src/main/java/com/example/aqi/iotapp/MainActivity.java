@@ -1,6 +1,5 @@
 package com.example.aqi.iotapp;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -80,16 +79,15 @@ public class MainActivity extends AppCompatActivity {
         FirebaseController.setUpFirebase();
 
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        /*FragmentTransaction transaction = getFragmentManager().beginTransaction();
         ActivityLogFragment fragment = new ActivityLogFragment();
         transaction.add(R.id.frag_test, fragment);
-        transaction.commit();
+        transaction.commit();*/
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -107,4 +105,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }*/
+
 }

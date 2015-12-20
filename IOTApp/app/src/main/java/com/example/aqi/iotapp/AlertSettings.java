@@ -9,6 +9,8 @@ public class AlertSettings {
 
     public String alertMessage = "Butts off!";
 
+    public String idExerciseVid = "CKjaFG4YN6g";
+
     public boolean playExerciseVids = false;
 
     public int vibrationStrength = 1; // scale out of 5
@@ -18,11 +20,12 @@ public class AlertSettings {
     //Default constructor
     public AlertSettings() {}
 
-    public AlertSettings(int alertSoundResource, String alertMessage, boolean playExerciseVids,
-                         int vibrationStrength)
+    public AlertSettings(int alertSoundResource, String alertMessage, String idExerciseVid,
+                         boolean playExerciseVids, int vibrationStrength)
     {
         this.alertSoundResource = alertSoundResource;
-        this. alertMessage = alertMessage;
+        this.alertMessage = alertMessage;
+        this.idExerciseVid = idExerciseVid;
         this.playExerciseVids = playExerciseVids;
         this. vibrationStrength = vibrationStrength;
     }
@@ -30,8 +33,8 @@ public class AlertSettings {
     @Override
     public String toString()
     {
-        return alertSoundResource + "\n" + alertMessage + "\n" + playExerciseVids + "\n"
-                + vibrationStrength;
+        return alertSoundResource + "\n" + alertMessage + "\n" + idExerciseVid + "\n"
+                + playExerciseVids + "\n" + vibrationStrength;
     }
 
 

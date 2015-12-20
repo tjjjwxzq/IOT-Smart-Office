@@ -92,9 +92,12 @@ void startAlerts(){
              if(alertLevel<4)
                alertLevel+=1;
                Serial.println(alertLevel);
-               mySerial.print("totalSittingDuration+"+timeInterval);
+               String timeData = "tSD+"+String(timeInterval/1000);
+            //Can't pass strings which are too long
+               Serial.println("totalSittingDuration+"+timeData);
+               mySerial.print(timeData);
             }
-          alertLevel = 1;
+          
         } 
          
       }else 
@@ -107,8 +110,15 @@ void startAlerts(){
               alertLevel+=1;
         }else
         {
+          Serial.print("Sitting ");
+          Serial.print(sitting);          
           //User got up; get app increment sittingTimes
-          mySerial.print("sittingTimes");
+          if(sitting = true)
+          {
+            alertLevel = 1;
+            sitting = false;
+            mySerial.print("sittingTimes");
+          }
         }     
         previousSitTime = currentTime;
         analogWrite(motorPin, 0);    

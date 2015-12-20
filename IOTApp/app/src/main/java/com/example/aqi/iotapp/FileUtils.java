@@ -75,9 +75,11 @@ public class FileUtils {
             boolean smartinterval;
             int[] alertSoundResources = new int[4];
             String[] alertMessages = new String[4];
+            String[] idExerciseVids = new String[4];
             boolean[] playExerciseVids = new boolean[4];
             int[] vibrationStrength = new int[4];
             AlertSettings[] alertSettings = new AlertSettings[4];
+
 
             rememberMe = Boolean.parseBoolean(bufferedReader.readLine());
             name = bufferedReader.readLine();
@@ -92,11 +94,12 @@ public class FileUtils {
             {
                 alertSoundResources[i] = Integer.parseInt(bufferedReader.readLine());
                 alertMessages[i] = bufferedReader.readLine();
+                idExerciseVids[i] = bufferedReader.readLine();
                 playExerciseVids[i] = Boolean.parseBoolean(bufferedReader.readLine());
                 vibrationStrength[i] = Integer.parseInt(bufferedReader.readLine());
 
                 alertSettings[i] = new AlertSettings(alertSoundResources[i],
-                        alertMessages[i], playExerciseVids[i], vibrationStrength[i]);
+                        alertMessages[i], idExerciseVids[i], playExerciseVids[i], vibrationStrength[i]);
             }
 
             bufferedReader.close();

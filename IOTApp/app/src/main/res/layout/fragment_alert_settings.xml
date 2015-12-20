@@ -4,32 +4,36 @@
     tools:context="com.example.aqi.iotapp.AlertSettingsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width = "match_parent"
-        android:layout_height="55dp"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        android:text = "Alert Sound"
-        android:textSize = "20sp"
-        android:id = "@+id/soundText" />
+    <TextView android:layout_width = "wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text = "ALERT SOUND"
+        android:id = "@+id/text_alertsound" />
 
     <Spinner
-        android:layout_width="250dp"
+        android:id="@+id/spinner_alertsound"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/alertChoices"
         android:entries="@array/alert_sounds"
-        android:layout_below="@+id/soundText"
+        android:layout_below="@+id/text_alertsound"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp" />
 
-    <TextView android:layout_width = "match_parent"
-        android:layout_height="55dp"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        android:text = "Play Exercise Videos at:"
-        android:textSize = "20sp"
-        android:id = "@+id/videosText"
-        android:layout_below="@+id/alertChoices"/>
+    <CheckBox
+        android:id="@+id/check_playexercisevids"
+        android:checked="true"
+        android:layout_below="@+id/spinner_alertsound"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/text_exercisevid"
+        android:text="EXERCISE VIDEO"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <Spinner
         android:layout_width="250dp"
         android:layout_height="wrap_content"

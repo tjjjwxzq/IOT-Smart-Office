@@ -37,6 +37,7 @@ implements DeviceControlFragment.btnAlertsListener{
 
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
+    private final static String FRAG_CONTROL = "DeviceControlFragment";
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
 
@@ -52,7 +53,7 @@ implements DeviceControlFragment.btnAlertsListener{
 
     private DrawerLayout mDrawerLayout;
 
-    private final String[] drawerArray = {"Profile", "Interval Settings", "Alert Settings"};
+    private final String[] drawerArray = {"Activity Log","Profile", "Interval Settings", "Alert Settings"};
 
     private FragmentManager fragmentManager;
 
@@ -164,23 +165,24 @@ private AlarmManager alarmManager;
         if (data != null) {
             Log.i(TAG, "Data:" + data);
             deviceControlFragment.mDataField.setText(data);
-            Intent intent;
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             switch(data){
 
-                case "totalSittingDuration":
+                case "tSD":
                     Log.d(TAG, "totalSittingDuration" + strArr[1]);
-                    FirebaseController.updateFirebase(strArr[0], Integer.parseInt(strArr[1]));
+                    FirebaseController.updateFirebase("totalSittingDuration", Integer.parseInt(strArr[1]));
                     break;
                 case "sittingTimes":
-                    Log.d(TAG, "sittingTimes" + strArr[1]);
+                    Log.d(TAG, "sittingTimes");
                     FirebaseController.updateFirebase(strArr[0], 0);
+                    break;
                 case "Alert Level 1":
                     AlertLevel1Fragment alertLevel1Fragment = new AlertLevel1Fragment();
-                    fragmentTransaction.replace(R.id.fragment_control,alertLevel1Fragment);
+                    fragmentTransaction.replace(R.id.fragment_control, alertLevel1Fragment);
                     fragmentTransaction.commit();
                     break;
                 case "Alert Level 2":
+                    Log.d(TAG, "Alert level 2");
                     AlertLevel2Fragment alertLevel2Fragment = new AlertLevel2Fragment();
                     fragmentTransaction.replace(R.id.fragment_control,alertLevel2Fragment);
                     fragmentTransaction.commit();
@@ -288,7 +290,8 @@ private AlarmManager alarmManager;
         fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         deviceControlFragment = new DeviceControlFragment();
-        fragmentTransaction.replace(R.id.fragment_control, deviceControlFragment);
+        fragmentTransaction.replace(R.id.fragment_control, deviceControlFragment, FRAG_CONTROL);
+        fragmentTransaction.addToBackStack(FRAG_CONTROL);
         fragmentTransaction.commit();
 
         //Set up navigation drawer
@@ -413,16 +416,21 @@ private AlarmManager alarmManager;
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 switch (position) {
                     case 0:
-                        fragment = new ProfileFragment();
+                        fragment = new ActivityLogFragment();
                         transaction.replace(R.id.fragment_control, fragment);
                         transaction.commit();
                         break;
                     case 1:
-                        fragment = new IntervalSettingsFragment();
+                        fragment = new ProfileFragment();
                         transaction.replace(R.id.fragment_control, fragment);
                         transaction.commit();
                         break;
                     case 2:
+                        fragment = new IntervalSettingsFragment();
+                        transaction.replace(R.id.fragment_control, fragment);
+                        transaction.commit();
+                        break;
+                    case 3:
                         fragment = new AlertSettingsFragment();
                         transaction.replace(R.id.fragment_control, fragment);
                         transaction.commit();

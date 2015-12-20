@@ -45,17 +45,14 @@
     <string name="title_activity_alert">AlertActivity</string>
 
     <string-array name = "time_intervals">
+        <item>15 mins</item>
         <item>30 mins</item>
+        <item>45 mins</item>
         <item>1 hour</item>
-        <item>1 hour 30 mins</item>
-        <item>2 hours</item>
     </string-array>
 
     <string-array name = "alert_sounds">
-        <item>sound1</item>
-        <item>sound2</item>
-        <item>sound3</item>
-        <item>sound4</item>
+        <item>Crazy Laughter</item>
     </string-array>
 
     <string-array name = "vid_timing">

@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:background="@color/colorMainBG"
     android:layout_height="match_parent" tools:context="com.example.aqi.iotapp.MainActivity">
+
+    <ImageView
+        android:src="@drawable/start_graphics"
+        android:layout_centerInParent="true"
+        android:layout_width="300dp"
+        android:layout_height="370dp" />
 
     <Button
         android:id="@+id/btn_getstarted"
         android:text="Get Started"
+        android:background="@drawable/rounded_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin = "@dimen/wide_button_margin"
@@ -14,11 +22,11 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="false" />
 
-    <fragment
+   <!-- <fragment
         android:id="@+id/frag_test"
         android:name="com.example.aqi.iotapp.ActivityLogFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"/>-->
 
 
 </RelativeLayout>
